@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:quickmovies/controllers/SignUp_controller.dart';
 import 'package:quickmovies/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,15 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
       Get.snackbar("Error", e.toString());
     } finally {
       setState(() => isLoading = false);
-    }
-  }
-
-  void _launchURL(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      Get.snackbar("Error", "Could not launch $url");
     }
   }
 
@@ -172,13 +164,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                               color: Colors.deepOrangeAccent,
                                             )
                                           : Container(
-                                              padding: EdgeInsets.all(8),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 5),
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(15),
                                                 border: Border.all(
                                                     color: Colors.white
-                                                        // ignore: deprecated_member_use
                                                         .withOpacity(0.5)),
                                                 gradient: LinearGradient(
                                                     begin: Alignment.topCenter,
@@ -214,24 +206,28 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              _launchURL("https://www.facebook.com");
+                            onTap: () async {
+                              final controller = Get.find<SignupController>();
+                              await controller.signInWithGoogle();
                             },
-                            child: Image.asset(
-                              'assets/icons/facebook.png',
-                              height: 45,
-                              width: 45,
-                            ),
-                          ),
-                          SizedBox(width: 20),
-                          GestureDetector(
-                            onTap: () {
-                              _launchURL("https://www.google.com");
-                            },
-                            child: Image.asset(
-                              'assets/icons/google.png',
-                              height: 45,
-                              width: 45,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.google,
+                                    color: Colors.deepOrange,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Text("Sign in with Google",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 14)),
+                                ],
+                              ),
                             ),
                           ),
                         ],

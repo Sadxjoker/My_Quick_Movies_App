@@ -25,5 +25,6 @@ class ThemeController extends GetxController {
 
   void changeTheme(AppTheme theme) {
     currentTheme.value = theme;
+    debugPrint(currentTheme.value.toString());
   }
 }

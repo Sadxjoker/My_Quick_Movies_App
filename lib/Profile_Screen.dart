@@ -2,16 +2,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quickmovies/Signup_Screen.dart';
+import 'package:quickmovies/controllers/SignUp_controller.dart';
 import 'package:quickmovies/controllers/theme_controller.dart';
 import 'package:quickmovies/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key});
+  final SignupController controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
     final themeController = Get.find<ThemeController>();
 
     return Scaffold(
@@ -43,8 +44,8 @@ class ProfileScreen extends StatelessWidget {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                   child: Container(
-                    height: 400,
-                    width: 400,
+                    height: 380,
+                    width: 380,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -69,8 +70,8 @@ class ProfileScreen extends StatelessWidget {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                   child: Container(
-                    height: 180,
-                    width: 180,
+                    height: 160,
+                    width: 160,
                     decoration: BoxDecoration(
                       color: Colors.deepOrange.withOpacity(0.7),
                       shape: BoxShape.circle,
@@ -89,17 +90,46 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 250),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Column(
+                  //     children: [
+                  //       _infoTile("Username",
+                  //           user?.userMetadata?['username'] ?? "Not set"),
+                  //       const SizedBox(height: 10),
+                  //       _infoTile("Email", user?.email ?? "Not set"),
+                  //     ],
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        _infoTile("Username",
-                            user?.userMetadata?['username'] ?? "Not set"),
-                        const SizedBox(height: 10),
-                        _infoTile("Email", user?.email ?? "Not set"),
-                      ],
+                    child: FutureBuilder(
+                      future: SignupController().getUserProfile(),
+                      // Fetch user profile data
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator(
+                            color: Colors.deepOrange,
+                          );
+                        }
+                        if (!snapshot.hasData) {
+                          return const Text("No profile data found");
+                        }
+
+                        final profile = snapshot.data!;
+                        return Column(
+                          children: [
+                            _infoTile(
+                                "Username", profile['username'] ?? "Not set"),
+                            const SizedBox(height: 10),
+                            _infoTile("Email", profile['email'] ?? "Not set"),
+                          ],
+                        );
+                      },
                     ),
                   ),
+
                   SizedBox(height: 10),
                   // Theme container
                   Padding(
