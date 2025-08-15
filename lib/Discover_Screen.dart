@@ -174,6 +174,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                             }
                                             return Center(
                                               child: CircularProgressIndicator(
+                                                strokeWidth: 2,
                                                 color: Colors.deepOrange,
                                                 value: loadingProgress
                                                             .expectedTotalBytes !=
@@ -337,6 +338,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                             }
                                             return Center(
                                               child: CircularProgressIndicator(
+                                                strokeWidth: 2,
                                                 color: Colors.deepOrange,
                                                 value: loadingProgress
                                                             .expectedTotalBytes !=
@@ -540,14 +542,14 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
                     ],
                   ),
-
                   /// Overlay Search Results
                   Obx(() {
                     if (searchResultController.isLoading.value) {
                       return Container(
-                        color: Colors.black.withOpacity(0.6),  
+                        color: Colors.black.withOpacity(0.6),
                         child: const Center(
                             child: CircularProgressIndicator(
+                          strokeWidth: 2,
                           color: Colors.deepOrangeAccent,
                         )),
                       );
@@ -621,12 +623,15 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                                       ),
                                                     )
                                                   : Container(
-                                                      height: 180,
+                                                      height: 150,
                                                       width: 140,
-                                                      color: Colors.grey[800],
+                                                      color:
+                                                          Colors.grey.shade800,
                                                       child: const Icon(
-                                                          Icons.image,
-                                                          color: Colors.white),
+                                                        Icons.image,
+                                                        color: Colors.white,
+                                                        size: 80,
+                                                      ),
                                                     ),
                                               Padding(
                                                 padding:

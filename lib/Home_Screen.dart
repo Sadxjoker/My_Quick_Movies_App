@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 200,
                     child: Center(
                       child: CircularProgressIndicator(
+                        strokeWidth: 2,
                         color: Colors.deepOrange,
                       ),
                     ),
@@ -173,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 350,
                 child: Center(
                   child: CircularProgressIndicator(
+                    strokeWidth: 2,
                     color: Colors.deepOrangeAccent,
                   ),
                 ),

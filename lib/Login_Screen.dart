@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:quickmovies/change_password_screen.dart';
 import 'package:quickmovies/controllers/SignUp_controller.dart';
 import 'package:quickmovies/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool isLoading = false;
   bool isObscure = true;
+  bool showForgotPassword = false;
 
   Future<void> _loginUser() async {
     if (!formkey.currentState!.validate()) return;
@@ -41,9 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         Get.snackbar("Login Failed", "Invalid email or password.");
+        setState(() => showForgotPassword = true);
       }
     } on AuthException catch (e) {
       Get.snackbar("Auth Error", e.message);
+      setState(() => showForgotPassword = true);
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {
@@ -160,8 +164,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ElevatedButton(
                                       onPressed: isLoading ? null : _loginUser,
                                       child: isLoading
-                                          ? CircularProgressIndicator(
-                                              color: Colors.deepOrangeAccent,
+                                          ? SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.deepOrange,
+                                              ),
                                             )
                                           : Container(
                                               padding: EdgeInsets.symmetric(
@@ -188,7 +197,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     color: Colors.white),
                                               ),
                                             ),
-                                    )
+                                    ),
+                                    if (showForgotPassword)
+                                      TextButton(
+                                        onPressed: () {
+                                          Get.to(() => ChangePasswordScreen(
+                                                isFromLogin: true,
+                                              ));
+                                        },
+                                        child: const Text(
+                                          "Forgot Password",
+                                          style: TextStyle(color: Colors.blue),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),

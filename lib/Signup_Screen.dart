@@ -132,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       const SizedBox(height: 30),
                       Row(
-                        // mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text("Already have an account?"),
                           TextButton(
@@ -169,6 +169,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             child: controller.isLoading.value
                                 ? const CircularProgressIndicator(
+                                    strokeWidth: 2,
                                     color: Colors.deepOrange,
                                   )
                                 : Center(

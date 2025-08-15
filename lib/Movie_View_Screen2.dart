@@ -40,12 +40,12 @@ class _MovieViewScreenState extends State<MovieViewScreen2> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'This is Testing API. Not for playing movies.\nIf you want to watch movies then.',
+              'This is a Testing API, not for playing movies.\nIf you want to watch movies, please use an official streaming service.',
             ),
             const SizedBox(height: 5),
             InkWell(
               onTap: () async {
-                final url = Uri.parse("http://moviebox.ng");
+                final url = Uri.parse("http://moviebox.ph");
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
                 } else {
@@ -56,7 +56,7 @@ class _MovieViewScreenState extends State<MovieViewScreen2> {
                 children: [
                   const Text("Visit: "),
                   const Text(
-                    "Visit: http://moviebox.ng",
+                    "Visit: http://moviebox.ph",
                     style: TextStyle(
                       color: Colors.deepOrange,
                       decoration: TextDecoration.underline,
@@ -89,7 +89,6 @@ class _MovieViewScreenState extends State<MovieViewScreen2> {
           body: Center(child: CircularProgressIndicator()),
         );
       }
-
       final movie = movieIdController.movieDetail.value!;
 
       return Scaffold(
@@ -99,11 +98,22 @@ class _MovieViewScreenState extends State<MovieViewScreen2> {
               children: [
                 SizedBox(
                   height: 330,
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w200${movie.posterPath}',
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.fill,
-                  ),
+                  child: movie.posterPath.isNotEmpty
+                      ? Image.network(
+                          'https://image.tmdb.org/t/p/w200${movie.posterPath}',
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                        )
+                      : Container(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          color: Colors.grey.shade800,
+                          child: const Icon(
+                            Icons.image,
+                            color: Colors.white,
+                            size: 100,
+                          ),
+                        ),
                 ),
                 Positioned.fill(
                   child: Center(
@@ -145,7 +155,40 @@ class _MovieViewScreenState extends State<MovieViewScreen2> {
                       size: 30,
                     ),
                   ),
-                )
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                    child: Obx(() => IconButton(
+                          onPressed: () {
+                            if (movieIdController.isFavorite.value) {
+                              // Remove from favorites
+                              movieIdController.removeFromFavorites(movie);
+                              Get.snackbar(
+                                  "Success", "Movie removed from favorites");
+                            } else {
+                              // Add to favorites
+                              movieIdController.addToFavorites(movie);
+                              Get.snackbar(
+                                  "Success", "Movie added to favorites");
+                            }
+                          },
+                          icon: Icon(
+                            movieIdController.isFavorite.value
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
+                            color: Colors.deepOrange,
+                            size: 30,
+                          ),
+                        )),
+                  ),
+                ),
               ],
             ),
             Padding(

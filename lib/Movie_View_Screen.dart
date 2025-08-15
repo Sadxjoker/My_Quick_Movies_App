@@ -40,12 +40,12 @@ class _MovieViewScreenState extends State<MovieViewScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'This is Testing API. Not for playing movies.\nIf you want to watch movies.',
+              'This is a Testing API, not for playing movies.\nIf you want to watch movies, please use an official streaming service.',
             ),
             const SizedBox(height: 5),
             InkWell(
               onTap: () async {
-                final url = Uri.parse("http://moviebox.ng");
+                final url = Uri.parse("http://moviebox.ph");
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
                 } else {
@@ -56,7 +56,7 @@ class _MovieViewScreenState extends State<MovieViewScreen> {
                 children: [
                   const Text("Visit: "),
                   const Text(
-                    "http://moviebox.ng",
+                    "http://moviebox.ph",
                     style: TextStyle(
                       color: Colors.deepOrange,
                       decoration: TextDecoration.underline,
@@ -102,11 +102,22 @@ class _MovieViewScreenState extends State<MovieViewScreen> {
               children: [
                 SizedBox(
                   height: 330,
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w200${movie.posterPath}',
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.fill,
-                  ),
+                  child: movie.posterPath.isNotEmpty
+                      ? Image.network(
+                          'https://image.tmdb.org/t/p/w200${movie.posterPath}',
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                        )
+                      : Container(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          color: Colors.grey.shade800,
+                          child: const Icon(
+                            Icons.image,
+                            color: Colors.white,
+                            size: 100,
+                          ),
+                        ),
                 ),
                 Positioned.fill(
                   child: Center(
@@ -148,7 +159,39 @@ class _MovieViewScreenState extends State<MovieViewScreen> {
                       size: 30,
                     ),
                   ),
-                )
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                    child: Obx(() => IconButton(
+                          onPressed: () {
+                            if (movieIdController.isFavorite.value) {
+                              // Remove from favorites
+                              movieIdController.removeFromFavorites(movie);
+                              Get.snackbar(
+                                  "Success", "Movie removed from favorites");
+                            } else {
+                              // Add to favorites
+                              movieIdController.addToFavorites(movie);
+                              Get.snackbar(
+                                  "Success", "Movie added to favorites");
+                            }
+                          },
+                          icon: Icon(
+                            movieIdController.isFavorite.value
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
+                            color: Colors.deepOrange,
+                            size: 30,
+                          ),
+                        )),
+                  ),
+                ),
               ],
             ),
             Padding(
@@ -360,12 +403,19 @@ class _ReadMoreTextState extends State<ReadMoreText> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLongText = widget.text.length > widget.limit;
+    final String displayText = isExpanded
+        ? widget.text
+        : isLongText
+            ? widget.text.substring(0, widget.limit)
+            : widget.text;
+
     return Text.rich(
       TextSpan(
-        text: isExpanded ? widget.text : widget.text.substring(0, widget.limit),
+        text: displayText,
         style: const TextStyle(fontSize: 11, color: Colors.grey),
         children: [
-          if (!isExpanded)
+          if (!isExpanded && isLongText)
             TextSpan(
               text: " Read More..",
               style: const TextStyle(

@@ -2,9 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quickmovies/Signup_Screen.dart';
+import 'package:quickmovies/change_password_screen.dart';
 import 'package:quickmovies/controllers/SignUp_controller.dart';
 import 'package:quickmovies/controllers/theme_controller.dart';
+import 'package:quickmovies/favorites_screen.dart';
 import 'package:quickmovies/main.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -105,12 +108,16 @@ class ProfileScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: FutureBuilder(
                       future: SignupController().getUserProfile(),
-                      // Fetch user profile data
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator(
-                            color: Colors.deepOrange,
+                          // Skeleton loader
+                          return Column(
+                            children: [
+                              _skeletonTile(),
+                              const SizedBox(height: 10),
+                              _skeletonTile(),
+                            ],
                           );
                         }
                         if (!snapshot.hasData) {
@@ -215,31 +222,48 @@ class ProfileScreen extends StatelessWidget {
                                     color: Colors.white,
                                     fontSize: 18),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          height: 70,
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(221, 39, 39, 39),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Change Password",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
-                                    fontSize: 18),
+                              const SizedBox(width: 80),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.grey,
+                                  size: 12,
+                                ),
+                                onPressed: () {
+                                  Get.to(() => FavoritesScreen());
+                                },
                               ),
                             ],
                           ),
                         ),
+                        SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(
+                                () => ChangePasswordScreen(isFromLogin: false));
+                          },
+                          child: Container(
+                            height: 70,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(221, 39, 39, 39),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Change Password",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white,
+                                      fontSize: 18),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -325,4 +349,19 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _skeletonTile() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade800,
+    highlightColor: Colors.grey.shade700,
+    child: Container(
+      height: 70,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  );
 }
